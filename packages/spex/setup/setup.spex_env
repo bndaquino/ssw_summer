@@ -1,0 +1,54 @@
+#!/bin/csh -f 
+#
+#   OSPEX and SPEX environmental setup script
+#   richard.schwartz@gsfc.nasa.gov, 28-oct-1998
+#   
+#
+# revised SSWDB_SPEX  on 3-mar-2001
+# added directions to pre2002, ras, 13-mar-2002
+# 
+# 22-Mar-2004, Kim Tolbert.  Added OSPEX env. variables
+# 30-Sep-2005, Kim Tolbert.  Added OSPEX_MODELS_DIR var to point to directory
+#   containing fit_model_components.txt file, so users can add models
+# 31-Jul-2006, Kim Tolbert.  Added SSWDB_SOXS
+# 06-Jul-2010, Kim Tolbert.  Added SSWDB_GBM
+
+#--------------------------------------------------------------------------
+#----- First section is for new object spex called OSPEX -------------------
+
+setenv SSW_OSPEX $SSW_SPEX/idl/object_spex
+setenv OSPEX_MODELS_DIR $SSW_OSPEX
+setenv SSWDB_SOXS $SSW_OSPEX/soxsresp
+setenv SSWDB_GBM $SSW_OSPEX/fermi
+setenv OSPEX_DOC $SSW_SPEX/doc
+setenv OSPEX_NOINTERACTIVE 0
+setenv OSPEX_DEBUG 0
+
+
+#------------------------------------------------------------------------
+#----- Second section is for original spex (non-object SPEX) ------------------
+
+#setenv SSW_SPEX $SSW_SPEX/idl/original_spex
+setenv SPEX_DOC $SSW_SPEX/doc
+
+#If you want to use SPEX without object references, and without
+#any maintenance after 13-mar-2002 then uncomment the next line:
+
+#setenv SSW_SPEX $SSW_SPEX/pre2002
+
+setenv SSWDB_SPEX $SSW_SPEX/idl/original_spex
+
+#Initialize SPEX with all parameters through SUMFILE
+#SUMFILE is created in SPEX using the SAVE_EVENT command.
+
+#setenv SPEX_EVENT SUMFILE
+
+#You may also initialize SPEX parameters without a data file
+#using the DFLTS_FILE - use the SAVE_DFLTS command.
+
+#setenv SPEX_DEFAULT DFLTS_FILE
+
+#Here are some other useful environment variables you may want to define
+
+#setenv SPEX_USER_DIR
+
