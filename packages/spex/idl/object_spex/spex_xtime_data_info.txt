@@ -1,10 +1,10 @@
+DAXSS  28-Feb-2022 - present
 FERMI_GBM  12-Aug-2008 - present
 FERMI_LAT  12-Aug-2008 - present
 KONUS  12-Nov-1994 - present. Flares.
 MESSENGER  ~2004 - 17-Sep-2014, spotty coverage
 MINXSS_1  9-Jun-2016 - 25-Apr-2017
 MINXSS_2  7-Dec-2018 - 5-Jan-2019
-DAXSS  28-Feb-2022 - present
 SMM_GRS  19-Feb-1980 - 21-Nov-1989. Flares.
 SMM_HXRBS  19-Feb-1980 - 21-Nov-1989. Flares.
 SOXS  1-Jul-2003 - 2-May-2011
@@ -40,3 +40,5 @@ HXRBS:  Files are for flare intervals.  The response matrix is computed - there 
 
 SOXS:  You need the .les file.  The response matrix is computed - there is no response file. CZT 
 and Si data are in same file. After selecting file, a popup will allow you to choose CZT or Si.
+
+MinXSS-1, MinXSS-2 and DAXSS: The data will be either a .sav or .fits file which can be found on the MinXSS data website (https://lasp.colorado.edu/home/minxss/data/) or a similar location. Please verify with the MinXSS/DAXSS Teams. The response matrices are included in ssw and on the MinXSS website. Currently, OSPEX will only display the MinXSS/DAXSS data in the plotman display when NOT in histogram mode. 

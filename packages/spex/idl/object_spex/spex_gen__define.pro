@@ -222,7 +222,7 @@ plot_params = join_struct(_extra, plot_params)
 obj -> set, _extra=plot_params
 
 ; This is necessary because the plot default is histogram, and for some data (minxss) want to override that
-hist_tag = get_tag_value(plot_params, /histogram, err=err)
+hist_tag = get_tag_value(plot_params, /histogram, err=err, /quiet)
 if err eq 0 && hist_tag eq 0 then psym_extra = 0 ; psym_extra won't have a value if plot_params.histogram didn't exist or isn't 0
 
 if not keyword_set(get_plot_obj) then begin

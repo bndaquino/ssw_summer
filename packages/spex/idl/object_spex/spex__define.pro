@@ -142,6 +142,7 @@
 ;   time with error bars in 'view spex fit results'.
 ; 06-Apr-2022, Kim. When calling therm_energy_plasma, don't multiply em by 1.d49.
 ; 19-Jan-2023, Kim. Added .sav to types of files to show in dialog when browsing for input file (for minxss)
+; 22-Jan-2023, Kim. Fix 19-Jan-2023 change (I had only added .sav for srm files, now for both srm and spectrum file)
 ;-
 ;---------------------------------------------------------------------------
 
@@ -212,7 +213,7 @@ pro spex::set_file, file, accum_time=accum_time, $
   ;filter = srm ? ['*.fits', '*.rmf', '*.dat', '*.rsp', '*.rsp2'] : $
   ;  ['*.fit', '*.fits', '*.dat', '*.les', '*.csv', '*.pha', 'wda*']
   filter = srm ? '*.fits;*.rmf;*.dat;*.rsp;*.rsp*,*.sav' : $
-  '*.fit;*.fits;*.dat;*.les;*.csv;*.pha;wda*'
+  '*.fit;*.fits;*.dat;*.les;*.csv;*.pha;wda*;*.sav'
   ;exts = srm ? ['fits', 'rmf', 'dat', 'rsp'] : ['fits', 'dat', 'les', 'csv', 'pha']
   multiple_files = srm ? 0 : 1
 

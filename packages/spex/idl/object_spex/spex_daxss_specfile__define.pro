@@ -1,4 +1,5 @@
-; This file contains spex_daxss_specfile's read_data method and a few helpers
+; This file contains spex_daxss_specfile's read_data method and a few helpers.
+; Jan 26: needs some more testing before upload to SSW
 
 ; Based on minxss_x123_level1_make_ospex_structure
 ; Just reformats the .sav data to be easier to use for OSPEX
@@ -76,9 +77,12 @@ end
 
 
 function spex_daxss_specfile::get_daxss_drm
-  ; How will OSPEX get this path? Where does the path go when I call o->set, spex_drmfile?
-;  path = '~/data/daxss/minxss_fm3_ARF.fits'
-;  drm = mrdfits(path, 1)
+
+;  daxss_resp_dir = getenv('SSWDB_DAXSS')
+;  if daxss_resp_dir eq '' then setenv, 'SSWDB_DAXSS=' + concat_dir ('$SSW_OSPEX', 'daxss')
+;  daxss_resp_file = concat_dir('$SSWDB_DAXSS', 'minxss_fm3_ARF.fits');   !! change this filename to be correct
+
+;  drm = mrdfits(daxss_resp_file, 1)
 ;  
 ;  min_energy_kev = 0.3
 ;  max_energy_kev = 25.

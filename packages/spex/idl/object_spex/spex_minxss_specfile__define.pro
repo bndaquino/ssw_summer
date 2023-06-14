@@ -11,11 +11,26 @@
 ; CATEGORY:
 ;       SPECTRAL FITTING, SPEX - minxss
 ;
-; Written 19-Jan-2022, Brendan D'Aquino, Northeastern University and Harvard-Smithsonian Center for Astrophysics
-; Points of contact: daquino.b@northeastern.edu, christopher.s.moore@cfa.harvard.edu, criselsuarez@gmail.com
+; CALLING SEQUENCE:
+;
+; CALLS:
+;   read_messenger_4_ospex
+;
+; INPUTS:
+;
+; OUTPUTS:
+;
+; INPUT KEYWORDS:
+;
+; OUTPUT KEYWORDS:
+;
+; PROCEDURE:
+;
+; Written 19-Jan-2022, Brendan D'Aquino
 ; 
 ; Modification History
 ; 19-Jan-2023, Kim. Added get_time_plot_args method to allow setting default for histogram option to 0
+; 02-Jun-2023, Kim. Use SSWDB_MINXSS (defined in setup.ospex_env or manually) env var to find DRM file
 ;------------------------------------------------------------------------------
 
 ; Reformats mission data for use in OSPEX.
@@ -31,15 +46,22 @@ function spex_minxss_specfile::format_to_ospex, minxss_data_structure
   ; So it's an array of structures, where each structure includes a spectrum and metadata
   ;   for a certain integration period
 
+  ; UTC and GPS count seconds from Jan 6 1980 (with GPS ignoring leap seconds)
+  ; Seems like UT counts from Jan 1 1979 instead
+  ; So we construct an array of integration time edges in GPS, then convert to UTC, and then
+  ;   add to that the number of seconds between Jan 1 1979 and Jan 6 1980 to finally get UT time edges (which OSPEX needs)
+  ; ut_edges is a [2,n_times] array, where [0,m] is the start of the mth time and [1,m] the end
   seconds_between_19790101_19800106 = 60.*60.*24.*(365+5)
-  utc_edges = gps2utc(transpose([[minxss_data_structure.spacecraftgpsformat], $
-    [minxss_data_structure.spacecraftgpsformat + minxss_data_structure.integration_time]]))
   tai_edges = transpose([[minxss_data_structure.tai], $
     [minxss_data_structure.tai + minxss_data_structure.integration_time]])
-  ut_edges2 = anytim(tai_edges, /sec, fiducial='tai')
-  ut_edges = utc_edges + seconds_between_19790101_19800106
+  ut_edges = anytim(tai_edges, /sec, fiducial='tai')
 
-  ; Consider changing energy bin calculation to the method in compare_bins
+  ; I don't know how the previous code handled energy edges. It seems like energy_bin_center_array was passed
+  ; in as an array of edges (not of centers) that could just be returned as is. Instead, I'm going to calculate
+  ; the edges based on the energy centers I find in the data product. I'm assuming that there are no gaps
+  ; between energy bins, so that the width of each energy bin is equal to the distance between adjacent centers,
+  ; and also that the bin width is the same across all bins.
+  ; energy_edges is a [2, n_energy] array where [0,n] is the start of the nth bin and [1,n] the end
   energy_bin_width = minxss_data_structure[0].energy[1] - minxss_data_structure[0].energy[0]
   energy_edges = transpose([[minxss_data_structure[0].energy - energy_bin_width/2], $
     [minxss_data_structure[0].energy + energy_bin_width/2]])
@@ -140,9 +162,13 @@ end
 
 ; Gets the MinXSS-1 or MinXSS-2 DRM from SSW.
 function spex_minxss_specfile::get_minxss_drm
-  ; How will OSPEX get this path? Where does the path go when I call o->set, spex_drmfile?
-  path = '/Users/bdaquino/MinXSS_OSPEX/Code/cmoore/drm_complete_minxss_x123_fm1_all_ospex_n_26_no_electrons.fits'
-  drm = mrdfits(path, 1)
+
+  ; Read minxss drm file and return matrix info in respinfo structure
+
+  minxss_resp_dir = getenv('SSWDB_MINXSS')
+  if minxss_resp_dir eq '' then setenv, 'SSWDB_MINXSS=' + concat_dir ('$SSW_OSPEX', 'minxss')
+  minxss_resp_file = concat_dir('$SSWDB_MINXSS', 'drm_complete_minxss_x123_fm1_all_ospex_n_26_no_electrons.fits')
+  drm = mrdfits(minxss_resp_file, 1)
   
   min_energy_kev = 0.3
   max_energy_kev = 25.
@@ -181,7 +207,8 @@ function spex_minxss_specfile::get_instrument
   is_fits = strpos(path, '.fits') ne -1
   
   if is_fits then begin
-    fits_read, '~/data/minxss1/my_m5.fits', dat, hdr, /header_only, /pdu
+;    fits_read, '~/data/minxss1/my_m5.fits', dat, hdr, /header_only, /pdu
+    fits_read, path, dat, hdr, /header_only, /pdu
     instrument_idx = where(strpos(hdr, 'INSTRUME') ne -1)
     instrument_card = hdr[instrument_idx]
     name = strmid(instrument_card, strpos(instrument_card, 'MinXSS'), strlen('MinXSS-X'))
