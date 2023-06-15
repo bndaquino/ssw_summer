@@ -12,6 +12,8 @@
 #   containing fit_model_components.txt file, so users can add models
 # 31-Jul-2006, Kim Tolbert.  Added SSWDB_SOXS
 # 06-Jul-2010, Kim Tolbert.  Added SSWDB_GBM
+# 02-Jun-2023, Kim Tolbert.  Added SSWDB_MINXSS and SSWDB_DAXSS
+
 
 #--------------------------------------------------------------------------
 #----- First section is for new object spex called OSPEX -------------------
@@ -20,6 +22,8 @@ setenv SSW_OSPEX $SSW_SPEX/idl/object_spex
 setenv OSPEX_MODELS_DIR $SSW_OSPEX
 setenv SSWDB_SOXS $SSW_OSPEX/soxsresp
 setenv SSWDB_GBM $SSW_OSPEX/fermi
+setenv SSWDB_MINXSS $SSW_OSPEX/minxss
+setenv SSWDB_DAXSS $SSW_OSPEX/daxss
 setenv OSPEX_DOC $SSW_SPEX/doc
 setenv OSPEX_NOINTERACTIVE 0
 setenv OSPEX_DEBUG 0
