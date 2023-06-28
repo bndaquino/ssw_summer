@@ -2,14 +2,10 @@
 pro test_new_ospex_for_Brendan
 
 TESTING_DIR = '$SSW' + path_sep() + 'test_code' + path_sep()
-;minxss_ospex_spec_file = TESTING_DIR + 'M5_0_2016-07-23 _n_26_no_electrons_minxss1_ospex_1_min_average_mission.sav'
 minxss_ospex_spec_file = '/Users/bdaquino/data/minxss1/minxss1_l1_mission_length_v4.0.0.sav'
 
 
-;Start OSPEX No GUI
-o=ospex() ; or  ospex_proc, o, /no_
-;Start OSPEX with GUI
-;o=ospex() ; or  ospex_proc, o, /no_
+o=ospex()
 
 
 ;Set SpecFile Path 
