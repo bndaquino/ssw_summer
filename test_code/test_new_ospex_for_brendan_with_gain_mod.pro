@@ -2,6 +2,7 @@
 pro test_new_ospex_for_Brendan
 
 TESTING_DIR = '$SSW' + path_sep() + 'test_code' + path_sep()
+;minxss_ospex_spec_file = TESTING_DIR + 'M5_0_2016-07-23 _n_26_no_electrons_minxss1_ospex_1_min_average_mission.sav'
 minxss_ospex_spec_file = '/Users/bdaquino/data/minxss1/minxss1_l1_mission_length_v4.0.0.sav'
 
 
@@ -19,6 +20,9 @@ max_energy = 12.
 
 ;Start OSPEX No GUI
 o=ospex() ; or  ospex_proc, o, /no_
+
+;Start OSPEX with GUI
+;o=ospex() ; or  ospex_proc, o, /no_
 
 
 ;Set SpecFile Path 
@@ -38,8 +42,8 @@ o->set, spex_erange=[min_energy, max_energy]
 
 ;;###########################################################
 ;This is the new function that needs to be tested!!! vth_abun -> to vth_abun_ext
-;This would be  vth_abund_ext 
-o->set, fit_function='vth_abun_ext' ;Pointer,  Fit function used
+;This would be  gain_mod + vth_abund_ext  (1 T All Free)
+o->set, fit_function='gain_mod+vth_abun_ext' ;Pointer,  Fit function used
 ;;###########################################################
 
 
@@ -47,10 +51,10 @@ o->set, fit_function='vth_abun_ext' ;Pointer,  Fit function used
 ;Check that the number of params == 1 vth_abund_ext 
 ; The number of params will double when using a 2 vth abund_ext 
 
-o->set, fit_comp_params= [1.0, 0.2, 1., 1., 1., 1., 1., 1., 1., 1.]
-o->set, fit_comp_free = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
-o->set, fit_comp_maxima = [1.e20, 4.0, 10., 10., 10., 10., 10., 10., 10., 10.]
-o->set, fit_comp_minima = [1.e-20, 0.1, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01]
+o->set, fit_comp_params= [0.0, 0.0, 1.0, 0.2, 1., 1., 1., 1., 1., 1., 1., 1.]
+o->set, fit_comp_free = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+o->set, fit_comp_maxima = [0.1, 0.1, 1.e20, 4.0, 10., 10., 10., 10., 10., 10., 10., 10.]
+o->set, fit_comp_minima = [-0.1, -0.1, 1.e-20, 0.1, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01]
 o->set, mcurvefit_itmax = spex_mcurvefit_itmax
 
 
