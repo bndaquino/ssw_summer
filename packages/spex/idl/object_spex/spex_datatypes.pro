@@ -85,7 +85,7 @@ function spex_datatypes, input, class=class
   s[11]= create_struct(tags, 'SPEX_ANY_SPECFILE', 'ANY', 0b, 2b, dets, life, comment)
   s[12]= create_struct(tags, 'SPEX_STIX_IMAGE', 'STIX IMAGE', 0b, 0b, dets, life, comment)
   s[13] = create_struct(tags, 'SPEX_SMM_GRS_SPECFILE', 'SMM_GRS', 1b, 0b, dets, life_grs, comment)
-  s[14] = create_struct(tags, 'SPEX_MINXSS_SPECFILE', 'MINXSS', 0b, 0b, dets, life, comment)
+  s[14] = create_struct(tags, 'SPEX_MINXSS_SPECFILE', 'MINXSS', 1b, 0b, dets, life, comment)
   s[15] = create_struct(tags, 'SPEX_DAXSS_SPECFILE', 'DAXSS', 0b, 0b, dets, life, comment)
 
   ; Sort alphabetically by name field
