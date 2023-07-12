@@ -172,7 +172,7 @@ function spex_minxss_specfile::get_minxss_drm
   
   min_energy_kev = 0.3
   max_energy_kev = 25.
-  index_in_range = WHERE((drm.edges_out[0,*] gt min_energy_kev) $ 
+  index_in_range = where((drm.edges_out[0,*] gt min_energy_kev) $ 
     and (drm.edges_out[0,*] lt max_energy_kev) $
     and (drm.edges_in[0,*] gt min_energy_kev) $
     and (drm.edges_in[0,*] lt max_energy_kev), n_index_in_range)
@@ -191,7 +191,7 @@ function spex_minxss_specfile::get_minxss_drm
 end
 
 ; Selects from a given array of bins ([2,n]) the ones between a min and max value
-; and returns the indexes of the bins kept.
+; and returns the indices of the bins kept.
 function spex_minxss_specfile::trim_bins, bins, min_val, max_val, idx=idx
 
   idx_in_range = where((bins[0,*] gt min_val) and (bins[0,*] lt max_val))
@@ -206,8 +206,8 @@ function spex_minxss_specfile::get_instrument
   path = self->get(/spex_specfile)
   is_fits = strpos(path, '.fits') ne -1
   
+  ; If FITS, get name from metadata
   if is_fits then begin
-;    fits_read, '~/data/minxss1/my_m5.fits', dat, hdr, /header_only, /pdu
     fits_read, path, dat, hdr, /header_only, /pdu
     instrument_idx = where(strpos(hdr, 'INSTRUME') ne -1)
     instrument_card = hdr[instrument_idx]
@@ -215,6 +215,7 @@ function spex_minxss_specfile::get_instrument
     return, name
   endif
   
+  ; If .sav, filename must contain instrument name
   if (strpos(strlowcase(path), 'minxss1') ne -1) or (strpos(strlowcase(path), 'minxss-1') ne -1) then begin
     return, 'MinXSS-1'
   endif

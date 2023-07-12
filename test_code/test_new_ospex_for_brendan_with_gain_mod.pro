@@ -11,8 +11,8 @@ start_time_flare = '2016-07-23 1:39:00'
 end_time_flare = '2016-07-23 1:42:30'
 
 spex_mcurvefit_itmax = 500 ; 200 ....500
-min_energy = 1.
-max_energy = 12.
+min_energy = 1.1
+max_energy = 3.5
 
 
 ;; minxss_test_function_data_minimal_signal_to_noise = 9 ;9 ; 5 - 10
@@ -51,8 +51,9 @@ o->set, fit_function='gain_mod+vth_abun_ext' ;Pointer,  Fit function used
 ;Check that the number of params == 1 vth_abund_ext 
 ; The number of params will double when using a 2 vth abund_ext 
 
-o->set, fit_comp_params= [0.0, 0.0, 1.0, 0.2, 1., 1., 1., 1., 1., 1., 1., 1.]
-o->set, fit_comp_free = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+;o->set, fit_comp_params= [-0.057, -0.194, 1.0, 0.2, 1., 1., 1., 1., 1., 1., 1., 1.]
+o->set, fit_comp_params= [-0.057005528, -0.19386595,  1,  0.2,   1.0000000,   1.0000000,   1.0000000,  0.64545077,  0.45229000, 1.0000000,   1.0000000,   1.0000000]
+o->set, fit_comp_free = [0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0]
 o->set, fit_comp_maxima = [0.1, 0.1, 1.e20, 4.0, 10., 10., 10., 10., 10., 10., 10., 10.]
 o->set, fit_comp_minima = [-0.1, -0.1, 1.e-20, 0.1, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01, 0.01]
 o->set, mcurvefit_itmax = spex_mcurvefit_itmax
@@ -75,6 +76,8 @@ o->dofit, /all
 ;Test vth_abun_ext + vth_abun_ext (2T-AllFree)
 ;Test vth_abun_ext (1T-AllFree) with BKD subtract
 ;Test vth_abun_ext (1T-AllFree BKD) +  vth_abun_ext (1T-AllFree Flare) - Enhanced method
+
+print, 1
 
 
 
