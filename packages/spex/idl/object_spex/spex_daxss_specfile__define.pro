@@ -78,37 +78,40 @@ end
 
 function spex_daxss_specfile::get_daxss_drm
 
-;  daxss_resp_dir = getenv('SSWDB_DAXSS')
-;  if daxss_resp_dir eq '' then setenv, 'SSWDB_DAXSS=' + concat_dir ('$SSW_OSPEX', 'daxss')
-;  daxss_resp_file = concat_dir('$SSWDB_DAXSS', 'minxss_fm3_ARF.fits');   !! change this filename to be correct
+  daxss_resp_dir = getenv('SSWDB_DAXSS')
+  if daxss_resp_dir eq '' then setenv, 'SSWDB_DAXSS=' + concat_dir ('$SSW_OSPEX', 'daxss')
+  daxss_resp_file = concat_dir('$SSWDB_DAXSS', 'drm_complete_daxss_inspiresat_ospex.fits')
 
-;  drm = mrdfits(daxss_resp_file, 1)
-;  
-;  min_energy_kev = 0.3
-;  max_energy_kev = 25.
-;  index_drm_range = WHERE((drm.edges_out[0,*] gt min_energy_kev) and (drm.edges_out[0,*] lt max_energy_kev) and (drm.edges_in[0,*] gt min_energy_kev) and (drm.edges_in[0,*] lt max_energy_kev), n_index_drm_range)
-;  drm_index_min = min(index_drm_range)
-;  drm_index_max = max(index_drm_range)
-;  
-;  
-;  
-;  trimmed_in = self->trim_bins(drm.edges_in, idx=idx_in)
-;  trimmed_out = self->trim_bins(drm.edges_out, idx=idx_out)
-;  trimmed_matrix = drm.repsonse_matrix[idx_out,*]
-;  trimmed_matrix = trimmed_matrix[*,idx_in]
-;  
-;  respinfo = {drm: drm.repsonse_matrix[drm_index_min:drm_index_max, drm_index_min:drm_index_max], $
-;    edges_in: drm.edges_in[*,index_drm_range], $
-;    edges_out: drm.edges_out[*,index_drm_range]}
+  drm = mrdfits(daxss_resp_file, 1)
   
-  dummy_respinfo = {drm: identity(1001), $
-    edges_in: findgen(1001)/1001*(25-3) + 3, $
-    edges_out: findgen(1001)/1001*(25-3) + 3}
-    
-  dummy_area = 1.
+  min_energy_kev = 0.3
+  max_energy_kev = 20.
+  index_drm_range = WHERE((drm.edges_out[0,*] gt min_energy_kev) and (drm.edges_out[0,*] lt max_energy_kev) and (drm.edges_in[0,*] gt min_energy_kev) and (drm.edges_in[0,*] lt max_energy_kev), n_index_drm_range)
+  drm_index_min = min(index_drm_range)
+  drm_index_max = max(index_drm_range)
   
-  to_return = {area: dummy_area, $
-    respinfo: dummy_respinfo}
+  
+  
+  trimmed_in = self->trim_bins(drm.edges_in, min_energy_kev, max_energy_kev, idx=idx_in)
+  trimmed_out = self->trim_bins(drm.edges_out, min_energy_kev, max_energy_kev, idx=idx_out)
+  trimmed_matrix = drm.repsonse_matrix[idx_out,*]
+  trimmed_matrix = trimmed_matrix[*,idx_in]
+  
+  respinfo = {drm: drm.repsonse_matrix[drm_index_min:drm_index_max, drm_index_min:drm_index_max], $
+    edges_in: drm.edges_in[*,index_drm_range], $
+    edges_out: drm.edges_out[*,index_drm_range]}
+
+  to_return = {area: drm.aperture_area_cm, $
+    respinfo: respinfo}
+  
+;  dummy_respinfo = {drm: identity(1001), $
+;    edges_in: findgen(1001)/1001*(25-3) + 3, $
+;    edges_out: findgen(1001)/1001*(25-3) + 3}
+;    
+;  dummy_area = 1.
+;  
+;  to_return = {area: dummy_area, $
+;    respinfo: dummy_respinfo}
 
   return, to_return
   
@@ -116,12 +119,10 @@ end
 
 ; Selects from a given array of bins ([2,n]) the ones between a min and max value
 ; and returns the indexes of the bins kept
-function spex_daxss_specfile::trim_bins, bins, idx=idx
+function spex_daxss_specfile::trim_bins, bins, min_energy_kev, max_energy_kev, idx=idx
 
-  min_energy_kev = 0.30
-  max_energy_kev = 25.00
 ;  idx_in_range = where((bins[0,*] gt min_energy_kev) and (bins[1,*] lt max_energy_kev))
-  idx_in_range = where((bins[0,*] gt min_energy_kev) and (bins[0,*] lt max_energy_kev+0.02))  ; arbitrary to match dimensions with drm (831)
+  idx_in_range = where((bins[0,*] gt min_energy_kev) and (bins[0,*] lt max_energy_kev))
   idx = idx_in_range
   return, bins[*,idx_in_range]
 
@@ -142,7 +143,8 @@ pro spex_daxss_specfile::read_data, file_index=file_index, $
   
   n_times = n_elements(data)
   
-  trimmed_ebins = self->trim_bins(data[0].energy_bins, idx=ebin_idx)
+  shift = 0.03  ; cut out some high bins to match bin edge dimensions with DRM
+  trimmed_ebins = self->trim_bins(data[0].energy_bins, 0.3, 20. - shift, idx=ebin_idx)
   n_energy = n_elements(trimmed_ebins[0,*])
   
   ltimes = dblarr(n_energy, n_times)
@@ -150,7 +152,7 @@ pro spex_daxss_specfile::read_data, file_index=file_index, $
     ; Same livetime for each energy bin
     ltimes[*,k] = data[k].integration_time
   endfor
-  stop
+  
   spectrum = data.total_counts[ebin_idx, *]                         ; dimensions: [n_energy, n_times]
   errors = data.uncertainty_total_counts[ebin_idx, *]               ; dimensions: [n_energy, n_times]
   livetime = ltimes                                                 ; dimensions: [n_energy, n_times]
